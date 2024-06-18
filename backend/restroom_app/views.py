@@ -11,7 +11,6 @@ import json
 
 class AllRestrooms(APIView):
 
-
     def get(self, request):
         
         restrooms = Restroom.objects.order_by('pk')
@@ -19,13 +18,21 @@ class AllRestrooms(APIView):
 
         return Response(serialized_restrooms.data)
     
-
-
-
+    
 class SelectedRestroom(APIView):
     
     def get_restroom(self, id):
-        pass
+        
+        if type(id) == int:
+            return Restroom.objects.get(id = id)
+        else:
+            return Restroom.objects.get(name = id)
+
+    def get(self, request, id):
+
+        selected_restroom = self.get_restroom(id)
+        serialized_selected_restroom = RestroomSerializer(selected_restroom, many=False)
+        return Response(serialized_selected_restroom)
     
     
 
