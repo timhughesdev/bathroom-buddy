@@ -8,6 +8,11 @@ import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
 } from '../services/api';
+import potty1 from '../assets/MockImages/potty1.jpg';
+import potty2 from '../assets/MockImages/potty2.jpg';
+import potty3 from '../assets/MockImages/potty3.jpg';
+import potty4 from '../assets/MockImages/potty4.jpg';
+import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
 
 // Define the Restroom type
@@ -95,7 +100,7 @@ const MainPage: React.FC = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={6}>
+        <Col md={4}>
           <div className='location-input'>
             <h4>Enter Your Location</h4>
             <PlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
@@ -103,6 +108,8 @@ const MainPage: React.FC = () => {
               Submit
             </Button>
           </div>
+        </Col>
+        <Col md={4}>
           <RestroomList
             restrooms={restrooms}
             onSelectRestroom={handleSelectRestroom}
@@ -110,17 +117,27 @@ const MainPage: React.FC = () => {
             showGenderNeutral={showGenderNeutral}
           />
         </Col>
-        <Col md={6}>
+        <Col md={4}>
           <div className='photos-reviews'>
-            <h4>Nearby Restrooms</h4>
             {selectedRestroom && (
-              <>
+              <React.Fragment>
                 <RestroomDetail restroom={selectedRestroom} />
-                <Button variant='primary' className='mt-2'>
-                  Upload Image
-                </Button>
-              </>
+              </React.Fragment>
             )}
+            <div className='photo-gallery mt-4'>
+              <img src={potty1} alt='potty1' />
+              <img src={potty2} alt='potty2' />
+              <img src={potty3} alt='potty3' />
+              <img src={potty4} alt='potty4' />
+              <img src={potty5} alt='potty5' />
+            </div>
+            <Button
+              variant='primary'
+              className='mt-2'
+              disabled={!selectedRestroom}
+            >
+              Upload Image
+            </Button>
             <h4 className='mt-4'>Recent Reviews</h4>
             <ul>
               {selectedRestroom?.reviews.map((review, index) => (
