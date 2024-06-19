@@ -1,33 +1,56 @@
+# backend/reviews_app/views.py
 from django.shortcuts import render
+from django.core.serializers import serialize
 from rest_framework.views import APIView, Response
 from rest_framework import status
 from .models import Review
-
-from django.core.serializers import serialize
 from .serializers import ReviewSerializer
-
 import json
 
 
 class AllReviews(APIView):
 
     def get(self, request):
-        
         reviews = Review.objects.order_by('pk')
         serialized_restrooms = ReviewSerializer(reviews, many=True)
-
         return Response(serialized_restrooms.data)
     
     
 class SelectedReview(APIView):
     
-    def get_review(self, id):
-        
-        return Review.objects.get(id = id)
+    def get_review(self, id): # added try/except to cover lack of review
+        try:
+            return Review.objects.get(id = id)
+        except Review.DoesNotExist:
+            return None
      
-    def get(self, request, id):
-
+    def get(self, request, id): # added if/else to cover no review
         selected_review = self.get_review(id)
-        serialized_selected_review = ReviewSerializer(selected_review, many=False)
-        return Response(serialized_selected_review)
+        if selected_review:
+            serialized_selected_review = ReviewSerializer(selected_review, many=False)
+            return Response(serialized_selected_review)
+        return Response({"error": "Review not found"}, status = status.HTTP_404_NOT_FOUND)
     
+    def post(self, request):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, id):
+        selected_review = self.get_review(id)
+        if not selected_review:
+            return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ReviewSerializer(selected_review, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        selected_review = self.get_review(id)
+        if not selected_review:
+            return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
+        selected_review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

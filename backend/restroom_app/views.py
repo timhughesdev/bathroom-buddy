@@ -1,8 +1,9 @@
+# backend/restroom_app/views.py
+
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from rest_framework import status
 from .models import Restroom
-
 from django.core.serializers import serialize
 from .serializers import RestroomSerializer
 
@@ -28,12 +29,35 @@ class SelectedRestroom(APIView):
         else:
             return Restroom.objects.get(name = id)
 
-    def get(self, request, id):
+    def get(self, request, id): 
 
+        selected_restroom = self.get_restroom(id) # added "if" to check if restroom exists
+        if selected_restroom:
+            serialized_selected_restroom = RestroomSerializer(selected_restroom, many=False)
+            return Response(serialized_selected_restroom)
+        return Response({"error": "Restroom not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    def post(self, request):
+        serializer = RestroomSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+        
+    def put(self, request, id):
         selected_restroom = self.get_restroom(id)
-        serialized_selected_restroom = RestroomSerializer(selected_restroom, many=False)
-        return Response(serialized_selected_restroom)
-    
-    
+        if not selected_restroom:
+            return Response({"error": "Restroom not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = RestroomSerializer(selected_restroom, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, id):
+        selected_restroom = self.get_restroom(id)
+        if not selected_restroom:
+            return Response({"error": "Restroom not found"}, status=status.HTTP_404_NOT_FOUND)
+        selected_restroom.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
