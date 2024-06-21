@@ -15,6 +15,15 @@ class AllReviews(APIView):
         serialized_restrooms = ReviewSerializer(reviews, many=True)
         return Response(serialized_restrooms.data)
     
+    def post(self, request):
+
+        serialized_new_review = ReviewSerializer(data=request.data)
+        if serialized_new_review.is_valid():
+            serialized_new_review.save()
+            return Response(serialized_new_review.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialized_new_review.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
 class SelectedReview(APIView):
     
@@ -28,15 +37,15 @@ class SelectedReview(APIView):
         selected_review = self.get_review(id)
         if selected_review:
             serialized_selected_review = ReviewSerializer(selected_review, many=False)
-            return Response(serialized_selected_review)
+            return Response(serialized_selected_review.data)
         return Response({"error": "Review not found"}, status = status.HTTP_404_NOT_FOUND)
     
-    def post(self, request):
-        serializer = ReviewSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request):
+    #     serializer = ReviewSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, id):
         selected_review = self.get_review(id)
@@ -50,7 +59,8 @@ class SelectedReview(APIView):
 
     def delete(self, request, id):
         selected_review = self.get_review(id)
+        restroom_name = selected_review.restroom
         if not selected_review:
             return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
         selected_review.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(f'The review for {restroom_name} has been deleted',status=status.HTTP_204_NO_CONTENT)
