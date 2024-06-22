@@ -3,9 +3,16 @@ from django.shortcuts import render
 from django.core.serializers import serialize
 from django.contrib.auth.models import User
 from rest_framework.views import APIView, Response
-from rest_framework import status
+from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer
 import json
+
+
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = User
+    permission_classes = [AllowAny]
 
 
 class AllUsers(APIView):
@@ -16,15 +23,6 @@ class AllUsers(APIView):
         serialized_users = UserSerializer(users, many=True)
 
         return Response(serialized_users.data)
-    
-    def post(self, request):
-
-        serialized_new_user = UserSerializer(data=request.data)
-        if serialized_new_user.is_valid():
-            serialized_new_user.save()
-            return Response(serialized_new_user.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serialized_new_user.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class SelectedUser(APIView):
     
