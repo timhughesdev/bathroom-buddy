@@ -5,10 +5,12 @@ import MainPage from './components/MainPage';
 // import LoginPage from './components/LoginPage';
 // import SignUpPage from './components/SignUpPage';
 import './App.css';
+import Navbar from './components/Navbar';
 
 const App: React.FC = () => {
   return (
     <Router>
+      <Navbar/>
       <LoadGoogleMaps>
         <Routes>
           <Route path='/' element={<MainPage />} />
