@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.core.serializers import serialize
 from rest_framework.views import APIView, Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .models import Review
 from .serializers import ReviewSerializer
@@ -9,6 +10,8 @@ import json
 
 
 class AllReviews(APIView):
+
+    permission_classes=[AllowAny]
 
     def get(self, request):
         reviews = Review.objects.order_by('pk')

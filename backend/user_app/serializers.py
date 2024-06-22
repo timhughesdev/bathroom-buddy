@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from django.contrib.auth.models import User
+from reviews_app.models import Review
 
 
 class UserSerializer(ModelSerializer):
@@ -24,5 +25,8 @@ class UserSerializer(ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+
     
 
