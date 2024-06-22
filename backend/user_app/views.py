@@ -17,6 +17,15 @@ class AllUsers(APIView):
 
         return Response(serialized_users.data)
     
+    def post(self, request):
+
+        serialized_new_user = UserSerializer(data=request.data)
+        if serialized_new_user.is_valid():
+            serialized_new_user.save()
+            return Response(serialized_new_user.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialized_new_user.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class SelectedUser(APIView):
     
     def get_user(self, id): # adjusted to resolve lack of user. Commmented previous code just in case.
@@ -28,24 +37,19 @@ class SelectedUser(APIView):
         except User.DoesNotExist:
             return None
 
-        # if type(id) == int:
-        #     return User.objects.get(id = id)
-        # else:
-        #     return User.objects.get(username = id)
-
     def get(self, request, id):
         selected_user = self.get_user(id)
         if selected_user:
             serialized_selected_user = UserSerializer(selected_user, many=False)
-            return Response(serialized_selected_user)
+            return Response(serialized_selected_user.data)
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request):
+    #     serializer = UserSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, id):
         selected_user = self.get_user(id)
@@ -59,7 +63,8 @@ class SelectedUser(APIView):
 
     def delete(self, request, id):
         selected_user = self.get_user(id)
+        selected_user_name = selected_user.username
         if not selected_user:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         selected_user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(f'{selected_user_name} has been deleted',status=status.HTTP_204_NO_CONTENT)
