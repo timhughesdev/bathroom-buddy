@@ -1,0 +1,18 @@
+.homelogo{
+    height: 100px;
+    
+}
+
+
+.bg-body-tertiary-custom{
+    --bs-bg-opacity: 1;
+    background:rgb(115, 147, 179);
+    border-radius: 0 0 5px 5px ;
+    
+}
+
+.navwhite{
+    color: #fff;
+}
+
+
