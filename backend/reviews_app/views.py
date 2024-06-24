@@ -20,8 +20,6 @@ class AllReviews(APIView):
     
     def post(self, request):
 
-        print('here is the data', request.data)
-
         serialized_new_review = ReviewSerializer(data=request.data)
         if serialized_new_review.is_valid():
             serialized_new_review.save()
@@ -31,6 +29,8 @@ class AllReviews(APIView):
     
     
 class SelectedReview(APIView):
+
+    permission_classes=[AllowAny]
     
     def get_review(self, id): # added try/except to cover lack of review
         try:

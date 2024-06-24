@@ -1,0 +1,32 @@
+Images model API end points (BaseUrl = http://127.0.0.1:8000/) 
+===============================
+
+
+http://127.0.0.1:8000/api/images/
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns all Images in the database
+
+POST Request creates new image
+
+
+===============================
+
+http://127.0.0.1:8000/api/images/{int}
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns specific image
+
+Put Request updates specific image
+
+delete Request deletes specific image
+
+===============================

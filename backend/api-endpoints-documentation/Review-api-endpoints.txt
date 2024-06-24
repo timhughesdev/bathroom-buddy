@@ -1,0 +1,32 @@
+REVIEW model API end points (BaseUrl = http://127.0.0.1:8000/) 
+===============================
+
+
+http://127.0.0.1:8000/api/reviews/
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns all reviews in the database
+
+POST Request creates new review
+
+
+===============================
+
+http://127.0.0.1:8000/api/reviews/{int}
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns specific review
+
+Put Request updates specific review
+
+delete Request deletes specific review
+
+===============================
