@@ -20,6 +20,8 @@ class AllReviews(APIView):
     
     def post(self, request):
 
+        print('here is the data', request.data)
+
         serialized_new_review = ReviewSerializer(data=request.data)
         if serialized_new_review.is_valid():
             serialized_new_review.save()
@@ -42,13 +44,6 @@ class SelectedReview(APIView):
             serialized_selected_review = ReviewSerializer(selected_review, many=False)
             return Response(serialized_selected_review.data)
         return Response({"error": "Review not found"}, status = status.HTTP_404_NOT_FOUND)
-    
-    # def post(self, request):
-    #     serializer = ReviewSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, id):
         selected_review = self.get_review(id)

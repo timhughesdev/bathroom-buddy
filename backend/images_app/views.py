@@ -3,10 +3,14 @@ from rest_framework.views import APIView, Response
 from rest_framework import status
 from .models import Image
 
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 from django.core.serializers import serialize
 from .serializers import ImageSerializer 
 
 class AllImages(APIView):
+
+    permission_classes = [AllowAny]
 
     def get(self, request):
         
@@ -25,6 +29,8 @@ class AllImages(APIView):
             return Response(serialized_new_image.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class SelectedImage(APIView):
+
+    permission_classes = [AllowAny]
     
     def get_image(self, id):
 
