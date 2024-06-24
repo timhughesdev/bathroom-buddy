@@ -16,7 +16,6 @@ from reviews_app.serializers import ReviewSerializer
 import json
 
 
-
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -89,7 +88,7 @@ class SelectedUserReviews(APIView):
         if user_reviews:
             serialized_user_reviews = ReviewSerializer(user_reviews, many=True)
             return Response(serialized_user_reviews.data)
-        return Response({"error": "User does not have an reviews posted"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "User does not have any reviews posted"}, status=status.HTTP_404_NOT_FOUND)
     
 # This view will be used to view a specific review from a specific user, as well as update and delete them
 

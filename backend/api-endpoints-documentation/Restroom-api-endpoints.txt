@@ -1,0 +1,32 @@
+Restroom model API end points (BaseUrl = http://127.0.0.1:8000/) 
+===============================
+
+
+http://127.0.0.1:8000/api/restrooms/
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns all restrooms in the database
+
+POST Request creates new restroom
+
+
+===============================
+
+http://127.0.0.1:8000/api/restrooms/{int}
+
+-  Requires authentication
+
+METHODS 
+--------
+
+Get Request returns specific restroom
+
+Put Request updates specific restroom
+
+delete Request deletes specific restroom
+
+===============================

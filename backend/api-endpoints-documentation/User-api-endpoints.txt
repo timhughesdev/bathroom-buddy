@@ -1,0 +1,81 @@
+USER model API end points (BaseUrl = http://127.0.0.1:8000/) 
+===============================
+
+
+http://127.0.0.1:8000/api/users/register/
+
+-  No authentication
+
+METHODS 
+--------
+POST Request creates a new user (must provide a username, and password)
+
+===============================
+
+http://127.0.0.1:8000/api/users/token/
+
+METHODS 
+--------
+POST Request returns an access/refresh token and (must provide a registered username, and password)
+
+===============================
+
+http://127.0.0.1:8000/api/users/token/refresh
+
+METHODS 
+--------
+POST Request refreshes access token and (must provide a refresh token)
+
+
+===============================
+
+http://127.0.0.1:8000/api/users/ 
+
+-Requires authentication
+
+METHODS 
+--------
+GET Request returns a list of all registered users
+
+
+===============================
+
+
+http://127.0.0.1:8000/api/users/{int or username} 
+
+-Requires authentication
+
+METHODS 
+--------
+GET Request returns a user by id or username
+
+PUT Request allows the updating of user fields 
+
+DELETE Request deletes user from database 
+
+===================================================
+
+http://127.0.0.1:8000/api/users/{int or username}/reviews/ 
+
+-Requires authentication
+
+METHODS 
+--------
+GET Request returns all reviews written by user 
+
+===================================================
+
+http://127.0.0.1:8000/api/users/{inor t username}/reviews/{int} 
+
+-Requires authentication
+
+METHODS 
+--------
+GET Request returns specific review written by specific user
+
+PUT Request allows user to update review
+
+DELETE Request allows user to delete review
+
+===================================================
+

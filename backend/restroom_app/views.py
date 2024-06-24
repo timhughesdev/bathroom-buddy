@@ -1,8 +1,11 @@
 # backend/restroom_app/views.py
 
 from django.shortcuts import render
+
 from rest_framework.views import APIView, Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 from .models import Restroom
 from django.core.serializers import serialize
 from .serializers import RestroomSerializer
@@ -11,6 +14,8 @@ import json
 
 
 class AllRestrooms(APIView):
+
+    permission_classes=[AllowAny]
 
     def get(self, request):
         
@@ -31,6 +36,8 @@ class AllRestrooms(APIView):
     
     
 class SelectedRestroom(APIView):
+
+    permission_classes=[AllowAny]
     
     def get_restroom(self, id):
         
