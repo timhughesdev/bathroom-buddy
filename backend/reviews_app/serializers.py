@@ -40,7 +40,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         user = User.objects.filter(username=user_data['username']).first()
        
         review = Review.objects.create(user=user, restroom=restroom, **validated_data)
-        return Review
+        return review
     
     def update(self, instance, validated_data):
 
