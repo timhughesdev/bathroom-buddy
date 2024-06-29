@@ -8,7 +8,7 @@ import './navbar.css'
 
 
 
-const Navbar = () => {
+const Navbar: React.FC = () =>  {
     return (<>
         <nav className="navbar navbar-expand-lg fixed-top mb-5 justify-content-center bg-body-tertiary-custom">
             <div className="container-fluid ">
@@ -32,11 +32,13 @@ const Navbar = () => {
                             </span></Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/login"><span className="d-flex align-items-center navwhite">
-                                <img src="/images/log-in.svg" alt="lgo in icon" />
-                                <span className="ms-2">login</span>
-                            </span></Link>
-                        </li>
+  <Link className="nav-link" to="/login">
+    <span className="d-flex align-items-center navwhite">
+      <img src="/images/log-in.svg" alt="log in icon" />
+      <span className="ms-2">login</span>
+    </span>
+  </Link>
+</li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/logout"><span className="d-flex align-items-center navwhite">
                                 <img src="/images/log-out.svg" alt="Log out icon" />
