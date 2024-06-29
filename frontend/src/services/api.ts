@@ -1,10 +1,32 @@
 // 3 api's one of them is in MapComponent.tsx
 
 import axios from 'axios';
+import { ACCESS_TOKEN } from '../constants';
 
 const API_URL =
   'https://zylalabs.com/api/2086/available+public+bathrooms+api/1869/get+public+bathrooms';
 const AUTH_TOKEN = 'Bearer 4701|NmzxbLgSnfJ9M9xlK23AyfuZbMROClefU0OqZh6v';
+
+export const backEndApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL
+})
+
+
+// add authorization header in all requests 
+
+backEndApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      config.headers.Authorization=`Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+  
+)
 
 export const fetchNearbyRestrooms = async (
   latitude: number,
@@ -47,3 +69,8 @@ export const fetchGenderNeutralRestrooms = async () => {
     throw error;
   }
 };
+
+
+
+
+

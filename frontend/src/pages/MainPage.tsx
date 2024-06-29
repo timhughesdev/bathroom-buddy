@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import MapComponent from './MapComponent';
-import RestroomList from './RestroomList';
-import RestroomDetail from './RestroomDetail';
-import PlacesAutocomplete from './PlacesAutoComplete';
+import MapComponent from '../components/MapComponent';
+import RestroomList from '../components/RestroomList';
+import RestroomDetail from '../components/RestroomDetail';
+import PlacesAutocomplete from '../components/PlacesAutoComplete';
+
 import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
