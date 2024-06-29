@@ -95,12 +95,12 @@ const MainPage: React.FC = () => {
   return (
     <Container fluid>
       <Row>
-        <Col md={12}>
+        <Col md={12} >
           <MapComponent restrooms={restrooms} />
         </Col>
       </Row>
       <Row>
-        <Col md={4}>
+        <Col md={4} className="mt-2">
           <div className='location-input'>
             <h4>Enter Your Location</h4>
             <PlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
@@ -109,7 +109,7 @@ const MainPage: React.FC = () => {
             </Button>
           </div>
         </Col>
-        <Col md={4}>
+        <Col md={4} className="mt-2">
           <RestroomList
             restrooms={restrooms}
             onSelectRestroom={handleSelectRestroom}
@@ -117,7 +117,7 @@ const MainPage: React.FC = () => {
             showGenderNeutral={showGenderNeutral}
           />
         </Col>
-        <Col md={4}>
+        <Col md={4} className="mt-2">
           <div className='photos-reviews'>
             {selectedRestroom && (
               <React.Fragment>
