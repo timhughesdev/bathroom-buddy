@@ -27,8 +27,9 @@ function RegisterAndLogout() {
 
 const App: React.FC = () => {
   return (
+    <>
     <Router>
-      <Navbar/>
+    <Navbar/>
       <LoadGoogleMaps>
         <Routes>
           <Route path='/login' element={<LoginPage />} />
@@ -48,6 +49,7 @@ const App: React.FC = () => {
         </Routes>
       </LoadGoogleMaps>
     </Router>
+    </>
   );
 };
 
