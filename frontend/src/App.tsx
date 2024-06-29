@@ -9,8 +9,9 @@ import Navbar from './components/Navbar';
 
 const App: React.FC = () => {
   return (
+    <>
     <Router>
-      <Navbar/>
+    <Navbar/>
       <LoadGoogleMaps>
         <Routes>
           <Route path='/' element={<MainPage />} />
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         </Routes>
       </LoadGoogleMaps>
     </Router>
+    </>
   );
 };
 
