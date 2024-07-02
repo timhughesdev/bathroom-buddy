@@ -6,7 +6,7 @@ class RestroomSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Restroom
-        fields = ('id', 'name', 'address', 'latitude', 'longitude', 'time_created')
+        fields = ('id', 'api_restroom_key', 'name', 'address', 'latitude', 'longitude', 'time_created')
 
 
     def to_internal_value(self, data):
@@ -15,6 +15,7 @@ class RestroomSerializer(serializers.ModelSerializer):
             if restroom:
                 return {
                     'id': restroom.id,
+                    'api_restroom_key': restroom.api_restroom_key,
                     'name': restroom.name,
                     'address': restroom.address,
                     'latitude': restroom.latitude,
