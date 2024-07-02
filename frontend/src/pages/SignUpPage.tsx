@@ -1,13 +1,17 @@
-import '../styles/signUpPage.css' 
-
+import '../styles/signUpPage.css';
 import { backEndApi } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import { FormEvent, useState } from 'react';
-// import { useJsApiLoader } from '@react-google-maps/api';
 
 
 function SignUpPage() {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
 
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
@@ -16,7 +20,6 @@ function SignUpPage() {
     const navigate = useNavigate()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        // setLoading(true);
         e.preventDefault();
 
         try {
@@ -27,47 +30,49 @@ function SignUpPage() {
         } 
         catch (error) {
             alert(error)
-        // } finally {
-        //     setLoading(false)
         }
     }
+  };
 
-    return (  
-        <>
-            <div className="register-background">
-                <div className="register-container">
-                    <form onSubmit={handleSubmit}>
-                        <h1>Create Profile</h1>
-                        <div className="input-box">
-                            <input 
-                                type="text" 
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value) }
-                                placeholder='Create username'
-                                required/>
-                        </div>
-                        <div className="input-box">
-                            <input 
-                                type="text" 
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value) }
-                                placeholder='Create password' 
-                                required/>
-                        </div>
-                        <div className="input-box">
-                            <input 
-                                type="text" 
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value) }
-                                placeholder='Enter email'
-                                required/>
-                        </div>
-                        <button className="login" type="submit">Create</button>
-                    </form>
-                </div>
-            </div>
-        </>
-    );
+  return (
+    <div className='register-background'>
+      <div className='register-container'>
+        <form onSubmit={handleSubmit}>
+          <h1>Create Profile</h1>
+          <div className='input-box'>
+            <input
+              type='text'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder='Create username'
+              required
+            />
+          </div>
+          <div className='input-box'>
+            <input
+              type='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder='Create password'
+              required
+            />
+          </div>
+          <div className='input-box'>
+            <input
+              type='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder='Enter email'
+              required
+            />
+          </div>
+          <button className='login' type='submit' disabled={loading}>
+            {loading ? 'Creating...' : 'Create'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default SignUpPage;
