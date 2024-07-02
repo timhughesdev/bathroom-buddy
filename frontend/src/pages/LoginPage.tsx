@@ -3,18 +3,18 @@ import { backEndApi } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import { FormEvent, useState } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
+// import { useJsApiLoader } from '@react-google-maps/api';
 
 
 function LoginPage() {
 
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false)
+    // const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        setLoading(true);
+        // setLoading(true);
         e.preventDefault();
 
         try {
@@ -25,8 +25,8 @@ function LoginPage() {
         } 
         catch (error) {
             alert(error)
-        } finally {
-            setLoading(false)
+        // } finally {
+        //     setLoading(false)
         }
     }
 
