@@ -4,13 +4,15 @@ import MapComponent from '../components/MapComponent';
 import RestroomList from '../components/RestroomList';
 import RestroomDetail from '../components/RestroomDetail';
 import PlacesAutocomplete from '../components/PlacesAutoComplete';
+import AddReviewModal from '../components/AddReviewModal';
+import { useUser } from '../contexts/UserContext';
 
 import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
   getReviewsForRestroom,
   Restroom,
-  Review 
+  Review
 } from '../services/api';
 import potty1 from '../assets/MockImages/potty1.jpg';
 import potty2 from '../assets/MockImages/potty2.jpg';
@@ -19,35 +21,17 @@ import potty4 from '../assets/MockImages/potty4.jpg';
 import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
 
-// Define the Restroom type
-// type Restroom = {
-//   id: number;
-//   name: string;
-//   address: string;
-//   latitude: number;
-//   longitude: number;
-//   photos: { url: string }[];
-//   reviews: { user: string; comment: string }[];
-// };
-
-// type Review = {
-//   user: string;
-//   comment: string;
-//   rating: number;
-// }
-
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
-  const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(
-    null
-  );
+  const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const { user } = useUser(); // Get the user from context
 
   useEffect(() => {
-    // Fetch user's location
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLatitude(position.coords.latitude);
@@ -59,7 +43,6 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     if (latitude !== null && longitude !== null) {
-      // Fetch restrooms near user's location
       fetchNearbyRestrooms(latitude, longitude)
         .then((data) => setRestrooms(data))
         .catch((error) => console.error('Error fetching restrooms', error));
@@ -82,17 +65,14 @@ const MainPage: React.FC = () => {
 
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
-    getReviewsForRestroom(id) // Added this line to fetch reviews for the selected restroom
-      .then((data) => setReviews(data)) // Added this line to store the fetched reviews
-      .catch((error) => console.error('Error fetching reviews', error)); // Added this line to handle errors
+    getReviewsForRestroom(id)
+      .then((data) => setReviews(data))
+      .catch((error) => console.error('Error fetching reviews', error));
   };
+
   const handleToggleGenderNeutral = () => {
     setShowGenderNeutral(!showGenderNeutral);
   };
-
-  const selectedRestroom = restrooms.find(
-    (restroom) => restroom.id === selectedRestroomId
-  );
 
   const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
     if (place.geometry) {
@@ -105,21 +85,38 @@ const MainPage: React.FC = () => {
     }
   };
 
-  const averageRating = reviews.length ? (reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1) : null; // Added this line to calculate the average rating
+  const selectedRestroom = restrooms.find(
+    (restroom) => restroom.id === selectedRestroomId
+  );
+
+  const averageRating = reviews.length
+    ? (
+        reviews.reduce((acc, review) => acc + review.rating, 0) /
+        reviews.length
+      ).toFixed(1)
+    : null;
+
+  const handleAddReview = (review: { user: string; comment: string; rating: number }) => {
+    const newReview: Review = {
+      ...review,
+      time_created: new Date().toISOString(), // Generate the current timestamp
+    };
+    setReviews((prevReviews) => [...prevReviews, newReview]);
+  };
 
   return (
     <Container fluid>
       <Row>
-        <Col md={12} >
+        <Col md={12}>
           <MapComponent restrooms={restrooms} />
         </Col>
       </Row>
       <Row>
         <Col md={4} className="mt-2">
-          <div className='location-input'>
+          <div className="location-input">
             <h4>Enter Your Location</h4>
             <PlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
-            <Button variant='primary' className='mt-2'>
+            <Button variant="primary" className="mt-2">
               Submit
             </Button>
           </div>
@@ -133,47 +130,66 @@ const MainPage: React.FC = () => {
           />
         </Col>
         <Col md={4} className="mt-2">
-          <div className='photos-reviews'>
+          <div className="photos-reviews">
             {selectedRestroom && (
-              <React.Fragment>
+              <>
                 <RestroomDetail restroom={selectedRestroom} />
-                <div className='reviews'>
+                <div className="reviews">
                   <h4>Recent Reviews</h4>
-                  {averageRating && <p>Average Rating: {averageRating}</p>} {/* This displays the average rating */}
-                  {reviews.length ? ( // This displays reviews or shows "No reviews yet"
+                  {averageRating && <p>Average Rating: {averageRating}</p>}
+                  {reviews.length ? (
                     <ul>
                       {reviews.map((review, index) => (
-                        <li key={index}>{review.comment}</li>
+                        <li key={index}>
+                          <strong>{review.user}:</strong> {review.comment}
+                        </li>
                       ))}
                     </ul>
                   ) : (
                     <p>No reviews yet.</p>
                   )}
                 </div>
-              </React.Fragment>
+              </>
             )}
-            <div className='photo-gallery mt-4'>
-              <img src={potty1} alt='potty1' />
-              <img src={potty2} alt='potty2' />
-              <img src={potty3} alt='potty3' />
-              <img src={potty4} alt='potty4' />
-              <img src={potty5} alt='potty5' />
+            <div className="photo-gallery mt-4">
+              <img src={potty1} alt="potty1" />
+              <img src={potty2} alt="potty2" />
+              <img src={potty3} alt="potty3" />
+              <img src={potty4} alt="potty4" />
+              <img src={potty5} alt="potty5" />
             </div>
             <Button
-              variant='primary'
-              className='mt-2'
+              variant="primary"
+              className="mt-2"
               disabled={!selectedRestroom}
             >
               Upload Image
             </Button>
-            <Button variant='primary' className='mt-2'>
+            <Button
+              variant="primary"
+              className="mt-2"
+              onClick={() => setShowReviewModal(true)}
+              disabled={!selectedRestroom}
+            >
               Upload Review
             </Button>
           </div>
         </Col>
       </Row>
+      {selectedRestroom && (
+        <AddReviewModal
+          show={showReviewModal}
+          handleClose={() => setShowReviewModal(false)}
+          handleAddReview={handleAddReview}
+        />
+      )}
     </Container>
   );
 };
 
 export default MainPage;
+
+
+
+
+
