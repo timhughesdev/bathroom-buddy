@@ -3,7 +3,7 @@ from .views import AllUsers, SelectedUser, CreateUserView, SelectedUserReviews, 
 from .converters import IntAndStrConverter, IntConverter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-# All urls are prefaced by http://localhost:8000/api/v1/users/
+# All urls are prefaced by http://localhost:8000/api/users/
 
 register_converter(IntAndStrConverter, 'int_or_str')
 register_converter(IntConverter, 'int')
