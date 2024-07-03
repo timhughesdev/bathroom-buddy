@@ -62,3 +62,12 @@ class SelectedReview(APIView):
             return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
         selected_review.delete()
         return Response(f'The review for {restroom_name} has been deleted',status=status.HTTP_204_NO_CONTENT)
+    
+class RestroomReviews(APIView):
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, restroom_id):
+        reviews = Review.objects.filter(restroom_id=restroom_id).order_by('-time_created')
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)

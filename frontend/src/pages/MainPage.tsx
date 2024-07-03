@@ -8,6 +8,9 @@ import PlacesAutocomplete from '../components/PlacesAutoComplete';
 import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
+  getReviewsForRestroom,
+  Restroom,
+  Review 
 } from '../services/api';
 import potty1 from '../assets/MockImages/potty1.jpg';
 import potty2 from '../assets/MockImages/potty2.jpg';
@@ -17,15 +20,21 @@ import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
 
 // Define the Restroom type
-type Restroom = {
-  id: number;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  photos: { url: string }[];
-  reviews: { user: string; comment: string }[];
-};
+// type Restroom = {
+//   id: number;
+//   name: string;
+//   address: string;
+//   latitude: number;
+//   longitude: number;
+//   photos: { url: string }[];
+//   reviews: { user: string; comment: string }[];
+// };
+
+// type Review = {
+//   user: string;
+//   comment: string;
+//   rating: number;
+// }
 
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
@@ -35,6 +44,7 @@ const MainPage: React.FC = () => {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     // Fetch user's location
@@ -72,8 +82,10 @@ const MainPage: React.FC = () => {
 
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
+    getReviewsForRestroom(id) // Added this line to fetch reviews for the selected restroom
+      .then((data) => setReviews(data)) // Added this line to store the fetched reviews
+      .catch((error) => console.error('Error fetching reviews', error)); // Added this line to handle errors
   };
-
   const handleToggleGenderNeutral = () => {
     setShowGenderNeutral(!showGenderNeutral);
   };
@@ -92,6 +104,8 @@ const MainPage: React.FC = () => {
       }
     }
   };
+
+  const averageRating = reviews.length ? (reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1) : null; // Added this line to calculate the average rating
 
   return (
     <Container fluid>
@@ -123,6 +137,19 @@ const MainPage: React.FC = () => {
             {selectedRestroom && (
               <React.Fragment>
                 <RestroomDetail restroom={selectedRestroom} />
+                <div className='reviews'>
+                  <h4>Recent Reviews</h4>
+                  {averageRating && <p>Average Rating: {averageRating}</p>} {/* This displays the average rating */}
+                  {reviews.length ? ( // This displays reviews or shows "No reviews yet"
+                    <ul>
+                      {reviews.map((review, index) => (
+                        <li key={index}>{review.comment}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No reviews yet.</p>
+                  )}
+                </div>
               </React.Fragment>
             )}
             <div className='photo-gallery mt-4'>
@@ -139,12 +166,6 @@ const MainPage: React.FC = () => {
             >
               Upload Image
             </Button>
-            <h4 className='mt-4'>Recent Reviews</h4>
-            <ul>
-              {selectedRestroom?.reviews.map((review, index) => (
-                <li key={index}>{review.comment}</li>
-              ))}
-            </ul>
             <Button variant='primary' className='mt-2'>
               Upload Review
             </Button>

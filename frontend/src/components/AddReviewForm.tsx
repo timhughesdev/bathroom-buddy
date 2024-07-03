@@ -2,18 +2,25 @@ import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
 interface AddReviewFormProps {
-  onAddReview: (review: { user: string; comment: string }) => void;
+  onAddReview: (review: { user: string; comment: string; rating: number }) => void;
 }
 
 const AddReviewForm: React.FC<AddReviewFormProps> = ({ onAddReview }) => {
   const [user, setUser] = useState('');
   const [comment, setComment] = useState('');
+  const [rating, setRating] = useState<number | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddReview({ user, comment });
-    setUser('');
-    setComment('');
+    if (rating !== null) {
+      onAddReview({ user, comment, rating });
+      setUser('');
+      setComment('');
+      setRating(null);
+    } else {
+      
+    }
+
   };
 
   return (
