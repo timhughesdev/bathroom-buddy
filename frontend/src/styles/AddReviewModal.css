@@ -1,0 +1,15 @@
+.stars {
+    display: flex;
+  }
+  
+  .star {
+    font-size: 24px;
+    color: white;
+    -webkit-text-stroke: 1px black; /* Add black outline to stars */
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  
+  .star.selected {
+    color: orange;
+  }
