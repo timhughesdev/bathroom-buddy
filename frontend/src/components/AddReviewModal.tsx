@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useUser } from '../contexts/UserContext';
+import { submitReview } from '../services/api';
 
 interface AddReviewModalProps {
   show: boolean;
   handleClose: () => void;
-  handleAddReview: (review: { user: string; comment: string; rating: number }) => void;
+  handleAddReview: (review: { user: string; comment: string; rating: number; restroomId: number }) => void;
+  restroomId: number; // Add restroomId prop
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview }) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroomId }) => {
   const { user } = useUser(); // Use the useUser hook to get the current user
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (user) {
-      handleAddReview({ user: user.username, comment, rating });
-      handleClose();
-      setComment('');
-      setRating(0);
+      const review = { user: user.username, comment, rating, restroomId };
+      try {
+        const submittedReview = await submitReview(review);
+        handleAddReview(submittedReview);
+        handleClose();
+        setComment('');
+        setRating(0);
+      } catch (error) {
+        console.error('Error submitting review:', error);
+      }
     }
   };
 
@@ -67,6 +75,8 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 };
 
 export default AddReviewModal;
+
+
 
 
 

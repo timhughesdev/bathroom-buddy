@@ -11,6 +11,7 @@ import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
   getReviewsForRestroom,
+  submitReview,
   Restroom,
   Review
 } from '../services/api';
@@ -96,12 +97,13 @@ const MainPage: React.FC = () => {
       ).toFixed(1)
     : null;
 
-  const handleAddReview = (review: { user: string; comment: string; rating: number }) => {
-    const newReview: Review = {
-      ...review,
-      time_created: new Date().toISOString(), // Generate the current timestamp
-    };
-    setReviews((prevReviews) => [...prevReviews, newReview]);
+  const handleAddReview = async (review: { user: string; comment: string; rating: number, restroomId: number }) => {
+    try {
+      const newReview = await submitReview(review);
+      setReviews((prevReviews) => [...prevReviews, newReview]);
+    } catch (error) {
+      console.error('Error adding review:', error);
+    }
   };
 
   return (
@@ -176,11 +178,12 @@ const MainPage: React.FC = () => {
           </div>
         </Col>
       </Row>
-      {selectedRestroom && (
+      {selectedRestroom && selectedRestroomId !== null && (
         <AddReviewModal
           show={showReviewModal}
           handleClose={() => setShowReviewModal(false)}
           handleAddReview={handleAddReview}
+          restroomId={selectedRestroomId} // Pass restroomId to the modal
         />
       )}
     </Container>
@@ -188,6 +191,8 @@ const MainPage: React.FC = () => {
 };
 
 export default MainPage;
+
+
 
 
 

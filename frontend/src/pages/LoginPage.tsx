@@ -3,6 +3,7 @@ import { backEndApi } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import { FormEvent, useState } from 'react';
+import { useUser } from '../contexts/UserContext';
 // import { useJsApiLoader } from '@react-google-maps/api';
 
 
@@ -12,6 +13,7 @@ function LoginPage() {
     const [password, setPassword] = useState<string>('')
     // const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
+    const { setUser } = useUser(); // Get the setUser function from UserContext
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         // setLoading(true);
@@ -21,6 +23,10 @@ function LoginPage() {
             const res = await backEndApi.post('/api/users/token/', {username, password})
             localStorage.setItem(ACCESS_TOKEN, res.data.access)
             localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+
+            // Set the user context
+            setUser({ username });
+
             navigate('/')
         } 
         catch (error) {
@@ -48,7 +54,7 @@ function LoginPage() {
                         </div>
                         <div className="input-box">
                             <input 
-                                type='text'
+                                type='password'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value) }
                                 placeholder='Password'
