@@ -13,7 +13,9 @@ import {
   getReviewsForRestroom,
   submitReview,
   Restroom,
-  Review
+  Review,
+  RestroomToPost,
+  User
 } from '../services/api';
 import potty1 from '../assets/MockImages/potty1.jpg';
 import potty2 from '../assets/MockImages/potty2.jpg';
@@ -25,12 +27,17 @@ import '../App.css';
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
   const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(null);
+  const [restroomObjectToPost, setRestroomObjectToPost] = useState({})
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const { user } = useUser(); // Get the user from context
+
+  const selectedRestroom = restrooms.find(
+    (restroom) => restroom.id === selectedRestroomId
+  );
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -64,6 +71,24 @@ const MainPage: React.FC = () => {
     }
   }, [showGenderNeutral, latitude, longitude]);
 
+
+  // handles creating the restroom object that will be used in review post commands
+
+  useEffect(() => {
+
+    if(selectedRestroom){
+      const restroomToPost:RestroomToPost = {
+        "api_restroom_key": selectedRestroom.id,
+        "name": selectedRestroom.name,
+        "address": selectedRestroom.street,
+        "latitude": selectedRestroom.latitude,
+        "longitude": selectedRestroom.longitude,
+      }
+      setRestroomObjectToPost(restroomToPost)
+    }
+
+  }, [selectedRestroom])
+
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
     getReviewsForRestroom(id)
@@ -86,10 +111,9 @@ const MainPage: React.FC = () => {
     }
   };
 
-  const selectedRestroom = restrooms.find(
-    (restroom) => restroom.id === selectedRestroomId
-  );
-
+  
+  // console.log(restroomObjectToPost)
+  
   const averageRating = reviews.length
     ? (
         reviews.reduce((acc, review) => acc + review.rating, 0) /
@@ -97,7 +121,7 @@ const MainPage: React.FC = () => {
       ).toFixed(1)
     : null;
 
-  const handleAddReview = async (review: { user: string; comment: string; rating: number, restroomId: number }) => {
+  const handleAddReview = async (review: { user: User; comment: string; rating: number, restroom: RestroomToPost }) => {
     try {
       const newReview = await submitReview(review);
       setReviews((prevReviews) => [...prevReviews, newReview]);
@@ -143,7 +167,7 @@ const MainPage: React.FC = () => {
                     <ul>
                       {reviews.map((review, index) => (
                         <li key={index}>
-                          <strong>{review.user}:</strong> {review.comment}
+                          <strong>{user?.username}:</strong> {review.comment}
                         </li>
                       ))}
                     </ul>
@@ -183,7 +207,7 @@ const MainPage: React.FC = () => {
           show={showReviewModal}
           handleClose={() => setShowReviewModal(false)}
           handleAddReview={handleAddReview}
-          restroomId={selectedRestroomId} // Pass restroomId to the modal
+          restroom={restroomObjectToPost} 
         />
       )}
     </Container>

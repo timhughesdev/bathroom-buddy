@@ -2,8 +2,9 @@ import '../styles/loginPage.css'
 import { backEndApi } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
+
 // import { useJsApiLoader } from '@react-google-maps/api';
 
 
@@ -14,6 +15,7 @@ function LoginPage() {
     // const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
     const { setUser } = useUser(); // Get the setUser function from UserContext
+
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         // setLoading(true);

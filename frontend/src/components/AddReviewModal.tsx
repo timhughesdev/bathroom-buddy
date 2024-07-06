@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useUser } from '../contexts/UserContext';
-import { submitReview } from '../services/api';
+import { RestroomToPost, submitReview, User } from '../services/api';
 
 interface AddReviewModalProps {
   show: boolean;
   handleClose: () => void;
-  handleAddReview: (review: { user: string; comment: string; rating: number; restroomId: number }) => void;
-  restroomId: number; // Add restroomId prop
+  handleAddReview: (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }) => void;
+  restroom: RestroomToPost; // Add restroomId prop
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroomId }) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom}) => {
   const { user } = useUser(); // Use the useUser hook to get the current user
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
+  // console.log(restroom)
+
   const handleSubmit = async () => {
     if (user) {
-      const review = { user: user.username, comment, rating, restroomId };
+      const review = { user: user.username, comment, rating, restroom: restroom};
+      console.log(review)
       try {
         const submittedReview = await submitReview(review);
         handleAddReview(submittedReview);
