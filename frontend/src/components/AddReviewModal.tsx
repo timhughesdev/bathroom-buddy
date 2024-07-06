@@ -10,17 +10,15 @@ interface AddReviewModalProps {
   restroom: RestroomToPost; // Add restroomId prop
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom}) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom }) => {
   const { user } = useUser(); // Use the useUser hook to get the current user
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
-  // console.log(restroom)
-
   const handleSubmit = async () => {
     if (user) {
-      const review = { user: user.username, comment, rating, restroom: restroom};
-      console.log(review)
+      const review = { user, comment, rating, restroom }; // Use the whole user object
+      console.log(review);
       try {
         const submittedReview = await submitReview(review);
         handleAddReview(submittedReview);
@@ -39,6 +37,11 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
         <Modal.Title>Add Review</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {user && (
+          <div>
+            <p><strong>Reviewing as:</strong> {user.username}</p> {/* Display the username */}
+          </div>
+        )}
         <Form>
           <Form.Group controlId="rating">
             <Form.Label>Rating</Form.Label>
@@ -78,8 +81,3 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 };
 
 export default AddReviewModal;
-
-
-
-
-

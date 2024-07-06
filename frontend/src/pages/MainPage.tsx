@@ -9,7 +9,7 @@ import { useUser } from '../contexts/UserContext';
 
 import {
   fetchNearbyRestrooms,
-  fetchGenderNeutralRestrooms,
+  // fetchGenderNeutralRestrooms,
   getReviewsForRestroom,
   submitReview,
   Restroom,
@@ -27,7 +27,7 @@ import '../App.css';
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
   const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(null);
-  const [restroomObjectToPost, setRestroomObjectToPost] = useState({})
+  const [restroomObjectToPost, setRestroomObjectToPost] = useState<RestroomToPost | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
@@ -57,37 +57,32 @@ const MainPage: React.FC = () => {
     }
   }, [latitude, longitude]);
 
-  useEffect(() => {
-    if (showGenderNeutral) {
-      fetchGenderNeutralRestrooms()
-        .then((data) => setRestrooms(data))
-        .catch((error) =>
-          console.error('Error fetching gender-neutral restrooms', error)
-        );
-    } else if (latitude !== null && longitude !== null) {
-      fetchNearbyRestrooms(latitude, longitude)
-        .then((data) => setRestrooms(data))
-        .catch((error) => console.error('Error fetching restrooms', error));
-    }
-  }, [showGenderNeutral, latitude, longitude]);
-
-
-  // handles creating the restroom object that will be used in review post commands
+  // useEffect(() => {
+  //   if (showGenderNeutral) {
+  //     fetchGenderNeutralRestrooms()
+  //       .then((data) => setRestrooms(data))
+  //       .catch((error) =>
+  //         console.error('Error fetching gender-neutral restrooms', error)
+  //       );
+  //   } else if (latitude !== null && longitude !== null) {
+  //     fetchNearbyRestrooms(latitude, longitude)
+  //       .then((data) => setRestrooms(data))
+  //       .catch((error) => console.error('Error fetching restrooms', error));
+  //   }
+  // }, [showGenderNeutral, latitude, longitude]);
 
   useEffect(() => {
-
-    if(selectedRestroom){
-      const restroomToPost:RestroomToPost = {
-        "api_restroom_key": selectedRestroom.id,
-        "name": selectedRestroom.name,
-        "address": selectedRestroom.street,
-        "latitude": selectedRestroom.latitude,
-        "longitude": selectedRestroom.longitude,
-      }
-      setRestroomObjectToPost(restroomToPost)
+    if (selectedRestroom) {
+      const restroomToPost: RestroomToPost = {
+        api_restroom_key: selectedRestroom.id,
+        name: selectedRestroom.name,
+        address: selectedRestroom.street,
+        latitude: selectedRestroom.latitude,
+        longitude: selectedRestroom.longitude,
+      };
+      setRestroomObjectToPost(restroomToPost);
     }
-
-  }, [selectedRestroom])
+  }, [selectedRestroom]);
 
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
@@ -111,9 +106,6 @@ const MainPage: React.FC = () => {
     }
   };
 
-  
-  // console.log(restroomObjectToPost)
-  
   const averageRating = reviews.length
     ? (
         reviews.reduce((acc, review) => acc + review.rating, 0) /
@@ -202,7 +194,7 @@ const MainPage: React.FC = () => {
           </div>
         </Col>
       </Row>
-      {selectedRestroom && selectedRestroomId !== null && (
+      {selectedRestroom && restroomObjectToPost && (
         <AddReviewModal
           show={showReviewModal}
           handleClose={() => setShowReviewModal(false)}
@@ -215,6 +207,7 @@ const MainPage: React.FC = () => {
 };
 
 export default MainPage;
+
 
 
 
