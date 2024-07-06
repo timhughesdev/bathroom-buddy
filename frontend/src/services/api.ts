@@ -75,7 +75,7 @@ export type Restroom = {
   latitude: number;
   longitude: number;
   photos: { url: string }[];
-  reviews: { user: string; comment: string; rating: number }[];
+  reviews: { user: string; comment: string; rating: number; restroomId: number }[];
 };
 
 export type Review = {
@@ -83,6 +83,7 @@ export type Review = {
   rating: number;
   comment: string;
   time_created: string;
+  restroomId: number;
 };
 
 // Fetch reviews for a specific restroom from the backend API
@@ -95,6 +96,19 @@ export const getReviewsForRestroom = async (restroomId: number): Promise<Review[
     throw error;
   }
 };
+
+// Function to post a review for a specific restroom
+export const submitReview = async (review: { user: string; comment: string; rating: number; restroomId: number }): Promise<Review> => {
+  try {
+    const response = await backEndApi.post('/reviews/', review);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    throw error;
+  }
+};
+
+
 
 
 
