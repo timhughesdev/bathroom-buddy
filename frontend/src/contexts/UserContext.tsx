@@ -1,30 +1,49 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// Define a type for the user
 interface User {
-  username: string;
+    username: string;
+    // Add other user properties if needed
 }
 
-interface UserContextProps {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+// Define a type for the context value
+interface UserContextValue {
+    user: User | null;
+    setUser: (user: User | null) => void;
 }
 
-const UserContext = createContext<UserContextProps | undefined>(undefined);
+// Define a type for the UserProvider props
+interface UserProviderProps {
+    children: ReactNode;
+}
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+const UserContext = createContext<UserContextValue | undefined>(undefined);
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
-  );
+export const UserProvider = ({ children }: UserProviderProps) => {
+    const [user, setUser] = useState<User | null>(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('user');
+        }
+    }, [user]);
+
+    return (
+        <UserContext.Provider value={{ user, setUser }}>
+            {children}
+        </UserContext.Provider>
+    );
 };
 
 export const useUser = () => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
+    const context = useContext(UserContext);
+    if (context === undefined) {
+        throw new Error('useUser must be used within a UserProvider');
+    }
+    return context;
 };

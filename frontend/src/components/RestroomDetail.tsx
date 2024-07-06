@@ -15,6 +15,7 @@ type Photo = {
 
 type Restroom = {
   id: number;
+  api_restroom_key: number;
   name: string;
   address: string;
   photos: Photo[];

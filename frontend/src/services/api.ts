@@ -70,7 +70,9 @@ export const fetchGenderNeutralRestrooms = async () => {
 // Define types for Restroom and Review
 export type Restroom = {
   id: number;
+  api_restroom_key: number;
   name: string;
+  street: string;
   address: string;
   latitude: number;
   longitude: number;
@@ -78,12 +80,24 @@ export type Restroom = {
   reviews: { user: string; comment: string; rating: number; restroomId: number }[];
 };
 
+export type RestroomToPost = {
+  api_restroom_key: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
+export type User = {
+  username: string
+}
+
 export type Review = {
-  user: string;
+  user: User;
   rating: number;
   comment: string;
   time_created: string;
-  restroomId: number;
+  restroom: RestroomToPost;
 };
 
 // Fetch reviews for a specific restroom from the backend API
@@ -98,7 +112,7 @@ export const getReviewsForRestroom = async (restroomId: number): Promise<Review[
 };
 
 // Function to post a review for a specific restroom
-export const submitReview = async (review: { user: string; comment: string; rating: number; restroomId: number }): Promise<Review> => {
+export const submitReview = async (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }): Promise<Review> => {
   try {
     const response = await backEndApi.post('/reviews/', review);
     return response.data;
