@@ -15,8 +15,6 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
-  // console.log(restroom)
-
   const handleSubmit = async () => {
     if (user) {
       const review = { user: user.username, comment, rating, restroom: restroom};

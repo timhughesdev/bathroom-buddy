@@ -100,10 +100,23 @@ export type Review = {
   restroom: RestroomToPost;
 };
 
+// Post restrooms to the data base 
+
+export const submitRestroom = async (restroom: {api_restroom_key: number, name: string, address: string, latitude:number, longitude: number}): Promise<RestroomToPost> => {
+  try {
+    console.log('here is data', restroom)
+    const response = await backEndApi.post(`api/restrooms/`, restroom);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting restroom:', error);
+    throw error;
+  }
+};
+
 // Fetch reviews for a specific restroom from the backend API
 export const getReviewsForRestroom = async (restroomId: number): Promise<Review[]> => {
   try {
-    const response = await backEndApi.get(`/reviews/restroom/${restroomId}/`);
+    const response = await backEndApi.get(`api/reviews/restroom/${restroomId}/`);
     return response.data;
   } catch (error) {
     console.error('Error fetching reviews:', error);
@@ -114,7 +127,7 @@ export const getReviewsForRestroom = async (restroomId: number): Promise<Review[
 // Function to post a review for a specific restroom
 export const submitReview = async (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }): Promise<Review> => {
   try {
-    const response = await backEndApi.post('/reviews/', review);
+    const response = await backEndApi.post('api/reviews/', review);
     return response.data;
   } catch (error) {
     console.error('Error submitting review:', error);
