@@ -30,6 +30,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         restroom_data['longitude'] = float(restroom_data['longitude'])
 
         restroom, _ = Restroom.objects.get_or_create(
+            api_restroom_key=restroom_data['api_restroom_key'],
             name=restroom_data['name'],
             address=restroom_data['address'],
             latitude=restroom_data['latitude'],

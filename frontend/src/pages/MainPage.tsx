@@ -28,7 +28,7 @@ import '../App.css';
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
   const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(null);
-  const [restroomObjectToPost, setRestroomObjectToPost] = useState({})
+  const [restroomObjectToPost, setRestroomObjectToPost] = useState<RestroomToPost | null>(null); // Initialize as null
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
@@ -74,22 +74,32 @@ const MainPage: React.FC = () => {
 
 
   // handles creating the restroom object that will be used in review post commands
-
   useEffect(() => {
-
-    if(selectedRestroom){
-      const restroomToPost:RestroomToPost = {
-        "api_restroom_key": selectedRestroom.id,
-        "name": selectedRestroom.name,
-        "address": selectedRestroom.street,
-        "latitude": selectedRestroom.latitude,
-        "longitude": selectedRestroom.longitude,
-      }
-      setRestroomObjectToPost(restroomToPost)
-      submitRestroom(restroomObjectToPost)
+    if (selectedRestroom) {
+      const restroomToPost: RestroomToPost = {
+        api_restroom_key: selectedRestroom.id,
+        name: selectedRestroom.name,
+        address: selectedRestroom.street,
+        latitude: selectedRestroom.latitude,
+        longitude: selectedRestroom.longitude,
+      };
+      setRestroomObjectToPost(restroomToPost);
+      console.log("here is data ", restroomToPost);
+      submitRestroom(restroomToPost).catch(error => {
+        console.error('Error submitting restroom:', error);
+        if (error.response) {
+          console.error('Response data:', error.response.data);
+          console.error('Status code:', error.response.status);
+          console.error('Headers:', error.response.headers);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+        } else {
+          console.error('Error in setting up request:', error.message);
+        }
+      });
     }
-
-  }, [selectedRestroom])
+  }, [selectedRestroom]);
+  
 
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
@@ -169,7 +179,7 @@ const MainPage: React.FC = () => {
                     <ul>
                       {reviews.map((review, index) => (
                         <li key={index}>
-                          <strong>{user?.username}:</strong> {review.comment}
+                          <strong>{review.user.username}:</strong> {review.comment}
                         </li>
                       ))}
                     </ul>
@@ -204,7 +214,7 @@ const MainPage: React.FC = () => {
           </div>
         </Col>
       </Row>
-      {selectedRestroom && selectedRestroomId !== null && (
+      {selectedRestroom && restroomObjectToPost && (
         <AddReviewModal
           show={showReviewModal}
           handleClose={() => setShowReviewModal(false)}
@@ -217,6 +227,7 @@ const MainPage: React.FC = () => {
 };
 
 export default MainPage;
+
 
 
 
