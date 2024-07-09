@@ -15,7 +15,8 @@ import {
   Restroom,
   Review,
   RestroomToPost,
-  User
+  User,
+  submitRestroom
 } from '../services/api';
 import potty1 from '../assets/MockImages/potty1.jpg';
 import potty2 from '../assets/MockImages/potty2.jpg';
@@ -85,6 +86,7 @@ const MainPage: React.FC = () => {
         "longitude": selectedRestroom.longitude,
       }
       setRestroomObjectToPost(restroomToPost)
+      submitRestroom(restroomObjectToPost)
     }
 
   }, [selectedRestroom])
