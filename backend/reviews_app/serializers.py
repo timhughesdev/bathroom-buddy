@@ -29,18 +29,30 @@ class ReviewSerializer(serializers.ModelSerializer):
         restroom_data['latitude'] = float(restroom_data['latitude'])
         restroom_data['longitude'] = float(restroom_data['longitude'])
 
-        restroom, _ = Restroom.objects.get_or_create(
-            name=restroom_data['name'],
-            address=restroom_data['address'],
-            latitude=restroom_data['latitude'],
-            longitude=restroom_data['longitude'],
-            time_created=restroom_data['time_created']
-        )
+        restroom, created = Restroom.objects.get_or_create(
+        api_restroom_key=restroom_data['api_restroom_key'],
+        defaults={
+            'name': restroom_data['name'],
+            'address': restroom_data['address'],
+            'latitude': restroom_data['latitude'],
+            'longitude': restroom_data['longitude'],
+            'time_created': restroom_data['time_created'],
+        }
+    )
+
+        if not created:
+            # Update the existing restroom record if necessary
+            restroom.name = restroom_data['name']
+            restroom.address = restroom_data['address']
+            restroom.latitude = restroom_data['latitude']
+            restroom.longitude = restroom_data['longitude']
+            restroom.time_created = restroom_data['time_created']
+            restroom.save()
 
         user = User.objects.filter(username=user_data['username']).first()
        
         review = Review.objects.create(user=user, restroom=restroom, **validated_data)
-        return Review
+        return review
     
     def update(self, instance, validated_data):
 

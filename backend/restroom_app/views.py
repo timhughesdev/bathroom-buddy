@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from rest_framework.views import APIView, Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -22,14 +23,6 @@ class AllRestrooms(APIView):
             return Response(serialized_new_restroom.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serialized_new_restroom.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def options(self, request, *args, **kwargs):
-        response = Response(status=status.HTTP_200_OK)
-        response['Allow'] = 'GET, POST, OPTIONS'
-        response['Access-Control-Allow-Origin'] = '*'
-        response['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        return response
 
 class SelectedRestroom(APIView):
     permission_classes = [AllowAny]
@@ -63,15 +56,7 @@ class SelectedRestroom(APIView):
             return Response({"error": "Restroom not found"}, status=status.HTTP_404_NOT_FOUND)
         name = selected_restroom.name
         selected_restroom.delete()
-        return Response(f'{name} has been deleted', status=status.HTTP_204_NO_CONTENT)
-
-    def options(self, request, *args, **kwargs):
-        response = Response(status=status.HTTP_200_OK)
-        response['Allow'] = 'GET, PUT, DELETE, OPTIONS'
-        response['Access-Control-Allow-Origin'] = '*'
-        response['Access-Control-Allow-Methods'] = 'GET, PUT, DELETE, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        return response
-
+        return Response(f'{name} has been deleted',status=status.HTTP_204_NO_CONTENT)
+    
 
     
