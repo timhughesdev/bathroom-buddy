@@ -7,18 +7,18 @@ interface AddReviewModalProps {
   show: boolean;
   handleClose: () => void;
   handleAddReview: (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }) => void;
-  restroom: RestroomToPost; // Add restroomId prop
+  restroom: RestroomToPost;
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom}) => {
-  const { user } = useUser(); // Use the useUser hook to get the current user
+const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom }) => {
+  const { user } = useUser();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
   const handleSubmit = async () => {
     if (user) {
-      const review = { user: user.username, comment, rating, restroom: restroom};
-      console.log(review)
+      const review = { user, comment, rating, restroom }; // user is of type User
+      console.log(review);
       try {
         const submittedReview = await submitReview(review);
         handleAddReview(submittedReview);
@@ -76,6 +76,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 };
 
 export default AddReviewModal;
+
 
 
 

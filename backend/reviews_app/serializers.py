@@ -29,6 +29,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         restroom_data['latitude'] = float(restroom_data['latitude'])
         restroom_data['longitude'] = float(restroom_data['longitude'])
 
+
         restroom, created = Restroom.objects.get_or_create(
         api_restroom_key=restroom_data['api_restroom_key'],
         defaults={
@@ -48,6 +49,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             restroom.longitude = restroom_data['longitude']
             restroom.time_created = restroom_data['time_created']
             restroom.save()
+
 
         user = User.objects.filter(username=user_data['username']).first()
        
