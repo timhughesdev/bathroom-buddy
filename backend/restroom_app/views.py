@@ -1,6 +1,7 @@
 # backend/restroom_app/views.py
 
 from django.shortcuts import render
+from django.http import HttpResponse
 
 from rest_framework.views import APIView, Response
 from rest_framework import status
@@ -32,8 +33,6 @@ class AllRestrooms(APIView):
             return Response(serialized_new_restroom.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serialized_new_restroom.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    
     
 class SelectedRestroom(APIView):
 
@@ -78,4 +77,5 @@ class SelectedRestroom(APIView):
             return Response({"error": "Restroom not found"}, status=status.HTTP_404_NOT_FOUND)
         selected_restroom.delete()
         return Response(f'{name} has been deleted',status=status.HTTP_204_NO_CONTENT)
+    
     
