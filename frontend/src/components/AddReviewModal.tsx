@@ -17,7 +17,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 
   const handleSubmit = async () => {
     if (user) {
-      const review = { user, comment, rating, restroom }; // user is of type User
+      const review = { user: { username: user.username }, comment, rating, restroom }; // Ensure user is of type User
       console.log(review);
       try {
         const submittedReview = await submitReview(review);
@@ -76,6 +76,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 };
 
 export default AddReviewModal;
+
 
 
 
