@@ -75,7 +75,7 @@ class RestroomReviews(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, restroom_id):
-        reviews = Review.objects.filter(api_restroom_key=restroom_id).order_by('-time_created')
+        reviews = Review.objects.filter(restroom__api_restroom_key=restroom_id).order_by('-restroom__time_created')
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
