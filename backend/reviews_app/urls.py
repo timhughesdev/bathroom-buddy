@@ -3,7 +3,7 @@ from django.urls import path, register_converter
 from .views import AllReviews, SelectedReview, RestroomReviews
 from .converters import IntConverter
 
-# All urls are prefaced by http://localhost:8000/api/v1/reviews/
+# All urls are prefaced by http://localhost:8080/api/reviews/
 
 register_converter(IntConverter, 'int_or_str')
 
