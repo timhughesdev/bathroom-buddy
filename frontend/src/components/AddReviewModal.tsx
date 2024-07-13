@@ -6,18 +6,38 @@ import { RestroomToPost, submitReview, User } from '../services/api';
 interface AddReviewModalProps {
   show: boolean;
   handleClose: () => void;
-  handleAddReview: (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }) => void;
+  handleAddReview: (review: {
+    user: User;
+    comment: string;
+    rating: number;
+    restroom: RestroomToPost;
+  }) => void;
   restroom: RestroomToPost;
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, handleAddReview, restroom }) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({
+  show,
+  handleClose,
+  handleAddReview,
+  restroom,
+}) => {
   const { user } = useUser();
   const [comment, setComment] = useState('');
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState<number>(0);
 
   const handleSubmit = async () => {
     if (user) {
-      const review = { user: { username: user.username }, comment, rating, restroom }; // Ensure user is of type User
+      if (rating === 0) {
+        alert('Please select a star rating');
+        return;
+      }
+
+      const review = {
+        user: { username: user.username },
+        comment,
+        rating,
+        restroom,
+      };
       console.log(review);
       try {
         const submittedReview = await submitReview(review);
@@ -38,24 +58,27 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group controlId="rating">
+          <Form.Group controlId='rating'>
             <Form.Label>Rating</Form.Label>
             <div>
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
                   onClick={() => setRating(star)}
-                  style={{ cursor: 'pointer', color: rating >= star ? 'orange' : 'gray' }}
+                  style={{
+                    cursor: 'pointer',
+                    color: rating >= star ? 'orange' : 'gray',
+                  }}
                 >
                   ★
                 </span>
               ))}
             </div>
           </Form.Group>
-          <Form.Group controlId="comment">
+          <Form.Group controlId='comment'>
             <Form.Label>Comment</Form.Label>
             <Form.Control
-              as="textarea"
+              as='textarea'
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -64,10 +87,10 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant='secondary' onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button variant='primary' onClick={handleSubmit}>
           Submit
         </Button>
       </Modal.Footer>
@@ -76,10 +99,3 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
 };
 
 export default AddReviewModal;
-
-
-
-
-
-
-
