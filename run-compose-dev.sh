@@ -9,7 +9,7 @@ export POSTGRES_DB=restroom_db
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 
-docker compose -f docker-compose.dev.yml up -d --build
+docker-compose -f docker-compose.dev.yml up -d --build
 
 # make sure the postgres container is ready, then run migrations
 sleep 10 

@@ -101,7 +101,7 @@ const MainPage: React.FC = () => {
 
   // Function to transform restroom data to RestroomToPost type
   const transformToRestroomToPost = (restroom: Restroom): RestroomToPost => ({
-    api_restroom_key: String(restroom.id),
+    id: restroomToPost.api_restroom_key,
     name: restroom.name,
     address: restroom.address,
     latitude: restroom.latitude,
