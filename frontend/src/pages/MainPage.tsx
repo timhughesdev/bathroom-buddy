@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Spinner } from 'react-bootstrap';
 import MapComponent from '../components/MapComponent';
 import RestroomList from '../components/RestroomList';
-import RestroomDetail from '../components/RestroomDetail';
+// import RestroomDetail from '../components/RestroomDetail';
 import PlacesAutocomplete from '../components/PlacesAutoComplete';
 import AddReviewModal from '../components/AddReviewModal';
 // import { useUser } from '../contexts/UserContext';
@@ -135,20 +135,18 @@ const MainPage: React.FC = () => {
     }
   };
 
-  
-  let averageRating;
 
-  if (reviews.length > 0) {
-    let totalReview = 0;
+  const totalRating = reviews.reduce((acc, review) => {
+    const rating =
+      typeof review.rating === 'number'
+        ? review.rating
+        : parseFloat(review.rating);
+    return acc + rating;
+  }, 0);
 
-    for (let i = 0; i < reviews.length; i++) {
-      totalReview += parseFloat(reviews[i].rating);
-    }
-
-    averageRating = (totalReview / reviews.length).toFixed(1);
-  } else {
-    averageRating = 'No Reviews Yet';
-  }
+  const averageRating = reviews.length
+    ? (totalRating / reviews.length).toFixed(1)
+    : 'No Reviews Yet';
 
   const handleAddReview = async (review: {
     user: User;
