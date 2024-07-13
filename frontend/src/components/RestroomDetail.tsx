@@ -33,16 +33,12 @@ const RestroomDetail: React.FC<RestroomDetailProps> = ({ restroom }) => {
 
   const handleAddReview = (review: Review) => {
     if (restroom) {
-      // Update the restroom reviews list
-      // This can also be done by calling a backend API to update the review
       restroom.reviews.push(review);
     }
   };
 
   const handlePhotoUpload = (photoUrl: string) => {
     if (restroom) {
-      // Update the restroom photos list
-      // This can also be done by calling a backend API to update the photo
       restroom.photos.push({ url: photoUrl });
     }
   };
