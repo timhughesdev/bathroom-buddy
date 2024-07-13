@@ -1,5 +1,14 @@
 version: '3'
 services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
+    volumes:
+      - ../frontend:/usr/share/nginx/html
+    container_name: frontend
   api:
     build: .
     command: sh -c "python manage.py migrate && gunicorn reputable_restrooms.wsgi:application --bind 0.0.0.0:8000"
