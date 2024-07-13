@@ -20,8 +20,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ show, handleClose, hand
       const review = { user: { username: user.username }, comment, rating, restroom }; // Ensure user is of type User
       console.log(review);
       try {
-        const submittedReview = await submitReview(review);
-        handleAddReview(submittedReview);
+        handleAddReview(review);
         handleClose();
         setComment('');
         setRating(0);
