@@ -40,8 +40,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
       };
       console.log(review);
       try {
-        const submittedReview = await submitReview(review);
-        handleAddReview(submittedReview);
+        handleAddReview(review);
         handleClose();
         setComment('');
         setRating(0);

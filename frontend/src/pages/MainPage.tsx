@@ -135,6 +135,7 @@ const MainPage: React.FC = () => {
     }
   };
 
+
   const totalRating = reviews.reduce((acc, review) => {
     const rating =
       typeof review.rating === 'number'
