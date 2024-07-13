@@ -135,11 +135,20 @@ const MainPage: React.FC = () => {
     }
   };
 
-  const averageRating = reviews.length
-    ? (
-        reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
-      ).toFixed(1)
-    : 'No Reviews Yet';
+  
+  let averageRating;
+
+  if (reviews.length > 0) {
+    let totalReview = 0;
+
+    for (let i = 0; i < reviews.length; i++) {
+      totalReview += parseFloat(reviews[i].rating);
+    }
+
+    averageRating = (totalReview / reviews.length).toFixed(1);
+  } else {
+    averageRating = 'No Reviews Yet';
+  }
 
   const handleAddReview = async (review: {
     user: User;
