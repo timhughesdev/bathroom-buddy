@@ -209,7 +209,11 @@ const MainPage: React.FC = () => {
           <div className='photos-reviews'>
             {selectedRestroom && (
               <>
-                <RestroomDetail restroom={selectedRestroom} />
+                <h2>
+                  <strong style={{ textDecoration: 'underline' }}>
+                    {selectedRestroom.name}
+                  </strong>
+                </h2>
                 <div className='reviews'>
                   <h4>Recent Reviews</h4>
                   {averageRating !== 'No Reviews Yet' ? (
