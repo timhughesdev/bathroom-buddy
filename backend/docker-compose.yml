@@ -11,8 +11,8 @@ services:
       dockerfile: ./webserver/Dockerfile
     restart: always
     ports:
-      - "8080:80"
-      depends_on:
+      - '8080:80'
+    depends_on:
       - api
   db:
     image: postgres:15
@@ -25,4 +25,3 @@ services:
 
 volumes:
   postgres_data:
-      
