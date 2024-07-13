@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useUser } from '../contexts/UserContext';
-import { RestroomToPost, submitReview, User } from '../services/api';
+import { RestroomToPost, User } from '../services/api';
 
 interface AddReviewModalProps {
   show: boolean;
