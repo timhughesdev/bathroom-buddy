@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -14,8 +19,6 @@ function Logout() {
   localStorage.clear();
   return <Navigate to='/login' />;
 }
-
-// prevent old access tokens from interfering with register
 
 function RegisterAndLogout() {
   localStorage.clear();

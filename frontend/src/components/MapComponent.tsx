@@ -1,14 +1,9 @@
-import React from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import React, { useEffect, useRef } from 'react';
+import { GoogleMap } from '@react-google-maps/api';
 
 const mapContainerStyle = {
   height: '500px',
   width: '100%',
-};
-
-const center = {
-  lat: 38.44251862646228,
-  lng: -122.71319136913861,
 };
 
 type Restroom = {
@@ -18,18 +13,35 @@ type Restroom = {
 
 interface MapComponentProps {
   restrooms: Restroom[];
+  center: {
+    lat: number;
+    lng: number;
+  };
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ restrooms }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ restrooms, center }) => {
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      restrooms.forEach((restroom) => {
+        new google.maps.Marker({
+          position: { lat: restroom.latitude, lng: restroom.longitude },
+          map: mapRef.current!,
+        });
+      });
+    }
+  }, [restrooms]);
+
   return (
-    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={13}>
-      {restrooms.map((restroom, index) => (
-        <Marker
-          key={index}
-          position={{ lat: restroom.latitude, lng: restroom.longitude }}
-        />
-      ))}
-    </GoogleMap>
+    <GoogleMap
+      mapContainerStyle={mapContainerStyle}
+      center={center}
+      zoom={13}
+      onLoad={(map) => {
+        mapRef.current = map;
+      }}
+    />
   );
 };
 

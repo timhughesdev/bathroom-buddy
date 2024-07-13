@@ -47,9 +47,13 @@ const RestroomDetail: React.FC<RestroomDetailProps> = ({ restroom }) => {
     }
   };
 
-  const averageRating = restroom.reviews && restroom.reviews.length
-    ? (restroom.reviews.reduce((acc, review) => acc + review.rating, 0) / restroom.reviews.length).toFixed(1)
-    : null;
+  const averageRating =
+    restroom.reviews && restroom.reviews.length
+      ? (
+          restroom.reviews.reduce((acc, review) => acc + review.rating, 0) /
+          restroom.reviews.length
+        ).toFixed(1)
+      : null;
 
   return (
     <div>
@@ -71,7 +75,9 @@ const RestroomDetail: React.FC<RestroomDetailProps> = ({ restroom }) => {
         <p>No image available.</p>
       )}
       <div>
-        <h4>Average Rating: {averageRating ? averageRating : 'No reviews yet'}</h4>
+        <h4>
+          Average Rating: {averageRating ? averageRating : 'No reviews yet'}
+        </h4>
         <ListGroup>
           {restroom.reviews && restroom.reviews.length ? (
             restroom.reviews.map((review, index) => (

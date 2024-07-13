@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Button, Spinner } from 'react-bootstrap';
 import MapComponent from '../components/MapComponent';
 import RestroomList from '../components/RestroomList';
 import RestroomDetail from '../components/RestroomDetail';
 import PlacesAutocomplete from '../components/PlacesAutoComplete';
 import AddReviewModal from '../components/AddReviewModal';
-import { useUser } from '../contexts/UserContext';
+// import { useUser } from '../contexts/UserContext';
 import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
@@ -26,13 +26,14 @@ import potty4 from '../assets/MockImages/potty4.jpg';
 import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
 import EditReviewModal from '../components/EditReviewsModal';
+
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
   const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(
     null
   );
   const [restroomObjectToPost, setRestroomObjectToPost] =
-    useState<RestroomToPost | null>(null); // Initialize as null
+    useState<RestroomToPost | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
@@ -40,10 +41,13 @@ const MainPage: React.FC = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewIdToEdit, setReviewIdToEdit] = useState<number | null>(null);
   const [showEditReviewModal, setShowEditReviewModal] = useState(false);
-  const { user } = useUser(); // Get the user from context
+  const [loading, setLoading] = useState<boolean>(false);
+  // const { user } = useUser();
+
   const selectedRestroom = restrooms.find(
     (restroom) => restroom.id === selectedRestroomId
   );
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -53,27 +57,35 @@ const MainPage: React.FC = () => {
       (error) => console.error('Error fetching location', error)
     );
   }, []);
+
   useEffect(() => {
     if (latitude !== null && longitude !== null) {
+      setLoading(true);
       fetchNearbyRestrooms(latitude, longitude)
         .then((data) => setRestrooms(data))
-        .catch((error) => console.error('Error fetching restrooms', error));
+        .catch((error) => console.error('Error fetching restrooms', error))
+        .finally(() => setLoading(false));
     }
   }, [latitude, longitude]);
+
   useEffect(() => {
     if (showGenderNeutral) {
+      setLoading(true);
       fetchGenderNeutralRestrooms()
         .then((data) => setRestrooms(data))
         .catch((error) =>
           console.error('Error fetching gender-neutral restrooms', error)
-        );
+        )
+        .finally(() => setLoading(false));
     } else if (latitude !== null && longitude !== null) {
+      setLoading(true);
       fetchNearbyRestrooms(latitude, longitude)
         .then((data) => setRestrooms(data))
-        .catch((error) => console.error('Error fetching restrooms', error));
+        .catch((error) => console.error('Error fetching restrooms', error))
+        .finally(() => setLoading(false));
     }
   }, [showGenderNeutral, latitude, longitude]);
-  // handles creating the restroom object that will be used in review post commands
+
   useEffect(() => {
     if (selectedRestroom) {
       const restroomToPost: RestroomToPost = {
@@ -84,30 +96,23 @@ const MainPage: React.FC = () => {
         longitude: selectedRestroom.longitude,
       };
       setRestroomObjectToPost(restroomToPost);
-      console.log('here is data ', restroomToPost);
       submitRestroom(restroomToPost).catch((error) => {
         console.error('Error submitting restroom:', error);
-        if (error.response) {
-          console.error('Response data:', error.response.data);
-          console.error('Status code:', error.response.status);
-          console.error('Headers:', error.response.headers);
-        } else if (error.request) {
-          console.error('No response received:', error.request);
-        } else {
-          console.error('Error in setting up request:', error.message);
-        }
       });
     }
   }, [selectedRestroom]);
+
   const handleSelectRestroom = (id: number) => {
     setSelectedRestroomId(id);
     getReviewsForRestroom(id)
       .then((data) => setReviews(data))
       .catch((error) => console.error('Error fetching reviews', error));
   };
+
   const handleToggleGenderNeutral = () => {
     setShowGenderNeutral(!showGenderNeutral);
   };
+
   const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
     if (place.geometry) {
       const newLatitude = place.geometry.location?.lat();
@@ -118,20 +123,24 @@ const MainPage: React.FC = () => {
       }
     }
   };
-  // handle delete request for crud operation, currently doesnt reset reviews on page
-  const handleDelete = (id: number) => {
+
+  const handleDelete = async (id: number) => {
     try {
-      deleteReview(id);
-      console.log('Delete review at index:', id);
+      await deleteReview(id);
+      setReviews((prevReviews) =>
+        prevReviews.filter((review) => review.id !== id)
+      );
     } catch (error) {
       console.error('Error deleting review', error);
     }
   };
+
   const averageRating = reviews.length
     ? (
         reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
       ).toFixed(1)
-    : null;
+    : 'No Reviews Yet';
+
   const handleAddReview = async (review: {
     user: User;
     comment: string;
@@ -145,6 +154,7 @@ const MainPage: React.FC = () => {
       console.error('Error adding review:', error);
     }
   };
+
   const handleEditReview = async (
     review: {
       user: User;
@@ -155,16 +165,26 @@ const MainPage: React.FC = () => {
     id: number
   ) => {
     try {
-      const newReview = await editReview(review, reviewIdToEdit);
+      const updatedReview = await editReview(review, id);
+      setReviews((prevReviews) =>
+        prevReviews.map((r) => (r.id === id ? updatedReview : r))
+      );
     } catch (error) {
-      console.error('Error adding review:', error);
+      console.error('Error editing review:', error);
     }
   };
+
   return (
     <Container fluid>
       <Row>
         <Col md={12}>
-          <MapComponent restrooms={restrooms} />
+          {latitude !== null && longitude !== null && (
+            <MapComponent
+              restrooms={restrooms}
+              center={{ lat: latitude, lng: longitude }}
+            />
+          )}
+          {loading && <Spinner animation='border' />}
         </Col>
       </Row>
       <Row>
@@ -192,14 +212,24 @@ const MainPage: React.FC = () => {
                 <RestroomDetail restroom={selectedRestroom} />
                 <div className='reviews'>
                   <h4>Recent Reviews</h4>
-                  {averageRating && <p>Average Rating: {averageRating}</p>}
+                  {averageRating !== 'No Reviews Yet' ? (
+                    <p>Average Rating: {averageRating}</p>
+                  ) : (
+                    <p>No Reviews yet</p>
+                  )}
+
                   {reviews.length ? (
                     <ul>
                       {reviews.map((review, index) => (
                         <li key={index}>
                           <strong>{review.user.username}:</strong>{' '}
                           {review.comment}
-                          <button onClick={() => setShowEditReviewModal(true)}>
+                          <button
+                            onClick={() => {
+                              setShowEditReviewModal(true);
+                              setReviewIdToEdit(review.id);
+                            }}
+                          >
                             Edit
                           </button>
                           <button onClick={() => handleDelete(review.id)}>
@@ -247,15 +277,24 @@ const MainPage: React.FC = () => {
           restroom={restroomObjectToPost}
         />
       )}
-      {selectedRestroom && reviewIdToEdit && (
+      {selectedRestroom && restroomObjectToPost && reviewIdToEdit && (
         <EditReviewModal
           show={showEditReviewModal}
           handleClose={() => setShowEditReviewModal(false)}
-          handleAddReview={handleAddReview}
+          handleEditReview={handleEditReview}
           restroom={restroomObjectToPost}
+          review_id={reviewIdToEdit}
+          existingComment={
+            reviews.find((review) => review.id === reviewIdToEdit)?.comment ||
+            ''
+          }
+          existingRating={
+            reviews.find((review) => review.id === reviewIdToEdit)?.rating || 0
+          }
         />
       )}
     </Container>
   );
 };
+
 export default MainPage;

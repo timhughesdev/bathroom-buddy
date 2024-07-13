@@ -7,14 +7,12 @@ const LoadGoogleMaps: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div>
     <LoadScript
-      googleMapsApiKey='AIzaSyBKFUK0Rrwjl7g6sMI3XOdKhimFT0vXCE4'
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY!}
       libraries={libraries}
     >
       {children}
     </LoadScript>
-    </div>
   );
 };
 
