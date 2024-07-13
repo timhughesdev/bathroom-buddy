@@ -93,6 +93,7 @@ export type User = {
 }
 
 export type Review = {
+  id: number;
   user: User;
   rating: number;
   comment: string;
@@ -127,7 +128,7 @@ export const getReviewsForRestroom = async (restroomId: number): Promise<Review[
 // Function to post a review for a specific restroom
 export const submitReview = async (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }): Promise<Review> => {
   try {
-    const response = await backEndApi.post('api/reviews/', review);
+    const response = await backEndApi.post('api/reviews/all/', review);
     return response.data;
   } catch (error) {
     console.error('Error submitting review:', error);
@@ -135,6 +136,25 @@ export const submitReview = async (review: { user: User; comment: string; rating
   }
 };
 
+export const editReview = async (review: { user: User; comment: string; rating: number; restroom: RestroomToPost }, id: number): Promise<Review> => {
+  try {
+    const response = await backEndApi.put(`api/reviews/review/${id}/`, review);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    throw error;
+  }
+};
+
+export const deleteReview = async (id: number): Promise<Review> => {
+  try {
+    const response = await backEndApi.delete(`api/reviews/review/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    throw error;
+  }
+};
 
 
 

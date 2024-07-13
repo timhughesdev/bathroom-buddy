@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import MapComponent from '../components/MapComponent';
 import RestroomList from '../components/RestroomList';
@@ -16,7 +16,9 @@ import {
   Review,
   RestroomToPost,
   User,
-  submitRestroom
+  submitRestroom,
+  deleteReview,
+  editReview
 } from '../services/api';
 import potty1 from '../assets/MockImages/potty1.jpg';
 import potty2 from '../assets/MockImages/potty2.jpg';
@@ -24,6 +26,7 @@ import potty3 from '../assets/MockImages/potty3.jpg';
 import potty4 from '../assets/MockImages/potty4.jpg';
 import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
+import EditReviewModal from '../components/EditReviewsModal';
 
 const MainPage: React.FC = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
@@ -34,6 +37,8 @@ const MainPage: React.FC = () => {
   const [showGenderNeutral, setShowGenderNeutral] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewIdToEdit, setReviewIdToEdit] = useState<number | null>(null)
+  const [showEditReviewModal, setShowEditReviewModal] = useState(false);
   const { user } = useUser(); // Get the user from context
 
   const selectedRestroom = restrooms.find(
@@ -123,9 +128,17 @@ const MainPage: React.FC = () => {
     }
   };
 
-  
-  // console.log(restroomObjectToPost)
-  
+  // handle delete request for crud operation, currently doesnt reset reviews on page
+
+  const handleDelete = (id: number) => {
+    try {
+      deleteReview(id)
+      console.log("Delete review at index:", id);
+    } catch (error) {
+      console.error('Error deleting review', error)
+    }
+  };
+
   const averageRating = reviews.length
     ? (
         reviews.reduce((acc, review) => acc + review.rating, 0) /
@@ -137,6 +150,15 @@ const MainPage: React.FC = () => {
     try {
       const newReview = await submitReview(review);
       setReviews((prevReviews) => [...prevReviews, newReview]);
+    } catch (error) {
+      console.error('Error adding review:', error);
+    }
+  };
+
+  const handleEditReview = async (review: { user: User; comment: string; rating: number, restroom: RestroomToPost }, id: number) => {
+    try {
+      const newReview = await editReview(review, reviewIdToEdit);
+
     } catch (error) {
       console.error('Error adding review:', error);
     }
@@ -180,6 +202,8 @@ const MainPage: React.FC = () => {
                       {reviews.map((review, index) => (
                         <li key={index}>
                           <strong>{review.user.username}:</strong> {review.comment}
+                          <button onClick={() => setShowEditReviewModal(true)}>Edit</button>
+                          <button onClick={() => handleDelete(review.id)}>Delete</button>
                         </li>
                       ))}
                     </ul>
@@ -218,6 +242,14 @@ const MainPage: React.FC = () => {
         <AddReviewModal
           show={showReviewModal}
           handleClose={() => setShowReviewModal(false)}
+          handleAddReview={handleAddReview}
+          restroom={restroomObjectToPost} 
+        />
+      )}
+      {selectedRestroom && reviewIdToEdit && (
+        <EditReviewModal 
+          show={showEditReviewModal}
+          handleClose={() => setShowEditReviewModal(false)}
           handleAddReview={handleAddReview}
           restroom={restroomObjectToPost} 
         />
