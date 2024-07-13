@@ -12,6 +12,8 @@ services:
     restart: always
     ports:
       - "8080:80"
+      depends_on:
+      - api
   db:
     image: postgres:15
     environment:
