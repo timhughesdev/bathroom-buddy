@@ -2,7 +2,7 @@ import '../styles/loginPage.css'
 import { backEndApi } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
-import { FormEvent, useState, useEffect } from 'react';
+import { FormEvent, useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 
 // import { useJsApiLoader } from '@react-google-maps/api';
