@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Row, Col, Button, Spinner } from 'react-bootstrap';
 import MapComponent from '../components/MapComponent';
 import RestroomList from '../components/RestroomList';
-// import RestroomDetail from '../components/RestroomDetail';
 import PlacesAutocomplete from '../components/PlacesAutoComplete';
 import AddReviewModal from '../components/AddReviewModal';
-// import { useUser } from '../contexts/UserContext';
 import {
   fetchNearbyRestrooms,
   fetchGenderNeutralRestrooms,
@@ -26,8 +24,10 @@ import potty4 from '../assets/MockImages/potty4.jpg';
 import potty5 from '../assets/MockImages/potty5.jpg';
 import '../App.css';
 import EditReviewModal from '../components/EditReviewsModal';
+import { useUser } from '../contexts/UserContext'; // Assuming you have a user context
 
 const MainPage: React.FC = () => {
+  const { user } = useUser(); // Get current user information
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
   const [selectedRestroomId, setSelectedRestroomId] = useState<number | null>(
     null
@@ -42,7 +42,7 @@ const MainPage: React.FC = () => {
   const [reviewIdToEdit, setReviewIdToEdit] = useState<number | null>(null);
   const [showEditReviewModal, setShowEditReviewModal] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  // const { user } = useUser();
+  const photoGalleryRef = useRef<HTMLDivElement>(null);
 
   const selectedRestroom = restrooms.find(
     (restroom) => restroom.id === selectedRestroomId
@@ -135,7 +135,6 @@ const MainPage: React.FC = () => {
     }
   };
 
-
   const totalRating = reviews.reduce((acc, review) => {
     const rating =
       typeof review.rating === 'number'
@@ -180,6 +179,24 @@ const MainPage: React.FC = () => {
       console.error('Error editing review:', error);
     }
   };
+
+  useEffect(() => {
+    const photoGallery = photoGalleryRef.current;
+    if (photoGallery) {
+      const handleWheel = (event: WheelEvent) => {
+        if (event.deltaY !== 0) {
+          event.preventDefault();
+          photoGallery.scrollBy({
+            left: event.deltaY < 0 ? -100 : 100,
+          });
+        }
+      };
+      photoGallery.addEventListener('wheel', handleWheel);
+      return () => {
+        photoGallery.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, []);
 
   return (
     <Container fluid>
@@ -235,17 +252,25 @@ const MainPage: React.FC = () => {
                         <li key={index}>
                           <strong>{review.user.username}:</strong>{' '}
                           {review.comment}
-                          <button
-                            onClick={() => {
-                              setShowEditReviewModal(true);
-                              setReviewIdToEdit(review.id);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button onClick={() => handleDelete(review.id)}>
-                            Delete
-                          </button>
+                          {user && user.username === review.user.username && (
+                            <>
+                              <Button
+                                variant='secondary'
+                                onClick={() => {
+                                  setShowEditReviewModal(true);
+                                  setReviewIdToEdit(review.id);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant='danger'
+                                onClick={() => handleDelete(review.id)}
+                              >
+                                Delete
+                              </Button>
+                            </>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -255,7 +280,7 @@ const MainPage: React.FC = () => {
                 </div>
               </>
             )}
-            <div className='photo-gallery mt-4'>
+            <div className='photo-gallery mt-4' ref={photoGalleryRef}>
               <img src={potty1} alt='potty1' />
               <img src={potty2} alt='potty2' />
               <img src={potty3} alt='potty3' />
