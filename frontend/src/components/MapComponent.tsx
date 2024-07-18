@@ -4,6 +4,7 @@ import { GoogleMap } from '@react-google-maps/api';
 const mapContainerStyle = {
   height: '500px',
   width: '100%',
+  marginBottom: '0px',
 };
 
 type Restroom = {

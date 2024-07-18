@@ -212,7 +212,7 @@ const MainPage: React.FC = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={4} className='mt-2'>
+        <Col md={12} lg={4} className='mt-2'>
           <div className='location-input'>
             <h4>Enter Your Location</h4>
             <PlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
@@ -221,7 +221,7 @@ const MainPage: React.FC = () => {
             </Button>
           </div>
         </Col>
-        <Col md={4} className='mt-2'>
+        <Col md={12} lg={4} className='mt-2'>
           <RestroomList
             restrooms={restrooms}
             onSelectRestroom={handleSelectRestroom}
@@ -229,7 +229,7 @@ const MainPage: React.FC = () => {
             showGenderNeutral={showGenderNeutral}
           />
         </Col>
-        <Col md={4} className='mt-2'>
+        <Col md={12} lg={4} className='mt-2'>
           <div className='photos-reviews'>
             {selectedRestroom && (
               <>
@@ -249,13 +249,16 @@ const MainPage: React.FC = () => {
                   {reviews.length ? (
                     <ul>
                       {reviews.map((review, index) => (
-                        <li key={index}>
-                          <strong>{review.user.username}:</strong>{' '}
-                          {review.comment}
+                        <li key={index} className='review-item'>
+                          <div className='review-text'>
+                            <strong>{review.user.username}:</strong>{' '}
+                            {review.comment}
+                          </div>
                           {user && user.username === review.user.username && (
-                            <>
+                            <div className='inline-buttons-container'>
                               <Button
                                 variant='secondary'
+                                className='inline-buttons'
                                 onClick={() => {
                                   setShowEditReviewModal(true);
                                   setReviewIdToEdit(review.id);
@@ -265,11 +268,12 @@ const MainPage: React.FC = () => {
                               </Button>
                               <Button
                                 variant='danger'
+                                className='inline-buttons'
                                 onClick={() => handleDelete(review.id)}
                               >
                                 Delete
                               </Button>
-                            </>
+                            </div>
                           )}
                         </li>
                       ))}
