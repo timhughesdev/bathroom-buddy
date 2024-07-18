@@ -51,7 +51,7 @@ body {
 .photos-reviews {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 100px); /* Adjust based on your layout */
+  height: 100%; /* Use full height */
 }
 
 .photos-reviews h4 {
@@ -61,7 +61,6 @@ body {
 .photos-reviews .reviews {
   flex: 1;
   overflow-y: auto; /* Make reviews scrollable */
-  max-height: 200px; /* Set a max height for the reviews section */
 }
 
 .photos-reviews button {
@@ -177,12 +176,20 @@ button:disabled {
 
 /* Media Queries for Responsive Design */
 @media (max-width: 768px) {
+  body {
+    overflow: auto; /* Enable scrolling */
+  }
+
+  .container-fluid {
+    padding: 10px;
+  }
+
   #map {
     height: 30%; /* Adjust height for smaller screens */
   }
 
   .photos-reviews {
-    max-height: calc(100vh - 150px); /* Adjust based on your layout */
+    max-height: 150px; /* Adjust based on your layout */
   }
 
   .location-input,
@@ -214,6 +221,7 @@ button:disabled {
 .review-text {
   flex-grow: 1;
 }
+
 .inline-buttons-container {
   display: flex;
   justify-content: space-between;
