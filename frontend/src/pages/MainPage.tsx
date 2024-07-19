@@ -243,7 +243,7 @@ const MainPage: React.FC = () => {
                   {averageRating !== 'No Reviews Yet' ? (
                     <p>Average Rating: {averageRating}</p>
                   ) : (
-                    <p>No Reviews yet</p>
+                    <p>No Reviews Yet</p>
                   )}
 
                   {reviews.length ? (
@@ -279,7 +279,7 @@ const MainPage: React.FC = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p>No reviews yet.</p>
+                    <p></p> // "No photos uploaded yet"
                   )}
                 </div>
               </>
